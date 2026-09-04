@@ -243,6 +243,7 @@
         btn.classList.add('on');
         btn.textContent='🔔 通知音・中文読み上げ ON';
         happySound();
+        setTimeout(()=>{speakChineseTwice('语音测试');},500);
       }, true);
       if(localStorage.getItem('fukurinrou_notify_sound')==='1'){
         notifyEnabled=true;
@@ -252,6 +253,9 @@
         btn.textContent='🔕 通知音と中国語読み上げを有効にする';
       }
     }
+    function isKitchenScreen(){
+      return document.body.classList.contains('kitchen-big-mode') ||/キッチン/.test(document.querySelector('.device-label')?.textContent || '');
+}
     function subscribeOrders(){
       if(!window.firebase || !firebase.apps || !firebase.apps.length) return;
 
@@ -276,7 +280,7 @@
             o=>o.status==='new' && !knownIds.has(o.id)
           );
 
-          if(newOrders.length && notifyEnabled){
+          if(newOrders.length && notifyEnabled && isKitchenScreen()){
             newOrders
               .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
               .forEach(order=>{
