@@ -1,0 +1,7 @@
+福林楼 テーブル固定URL
+
+T1: https://fukurinrou-order.netlify.app/?table=T1
+T2: https://fukurinrou-order.netlify.app/?table=T2
+T3: https://fukurinrou-order.netlify.app/?table=T3
+
+各テーブルのQRコードは、それぞれ対応するURLで作成してください。

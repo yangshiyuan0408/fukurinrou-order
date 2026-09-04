@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "menu": {
+      ".read": "auth !== null",
+      ".write": "auth !== null && auth.uid === 'kFSCzY1oNPaSJRuI1N8DSDQOpdq1'"
+    },
+    "orders": {
+      ".read": "auth !== null && auth.uid === 'kFSCzY1oNPaSJRuI1N8DSDQOpdq1'",
+      "$orderId": {
+        ".write": "auth !== null && (auth.uid === 'kFSCzY1oNPaSJRuI1N8DSDQOpdq1' || (auth.token.firebase.sign_in_provider === 'anonymous' && !data.exists() && newData.exists() && newData.child('id').val() === $orderId && newData.child('status').val() === 'new' && newData.child('createdAt').isNumber() && newData.child('total').isNumber() && newData.child('items').exists() && (newData.child('table').val() === 'T1' || newData.child('table').val() === 'T2' || newData.child('table').val() === 'T3')))"
+      }
+    },
+    "tableSessions": {
+      "$table": {
+        ".read": "auth !== null && ($table === 'T1' || $table === 'T2' || $table === 'T3')",
+        ".write": "auth !== null && auth.uid === 'kFSCzY1oNPaSJRuI1N8DSDQOpdq1'"
+      }
+    }
+  }
+}
