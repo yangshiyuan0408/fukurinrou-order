@@ -1,4 +1,4 @@
-// 2026-09-05 23:46 変更済み
+// 2026-09-06 00:32 変更済み
 (function(){
   const IS_STAFF=/staff\.html(?:$|\?)/.test(location.pathname) || /管理画面/.test(document.title);
   const CUSTOMER_STYLE=`
@@ -160,7 +160,7 @@
         enhanceStaffUI();
         hookSaveButton();
         // v5.3: staff.html がキッチン通知を直接制御する。旧版だけ従来フックを使う。
-        if(!window.FUKURIN_V53_STAFF_DRIVES_VOICE){
+        if(!window.FUKURIN_V54_STAFF_DRIVES_VOICE && !window.FUKURIN_V53_STAFF_DRIVES_VOICE){
           hookSoundButton();
           if(!subscribed) subscribeOrders();
         }
@@ -193,7 +193,7 @@
       tone(1046,t,0.11,'triangle',0.12); tone(1318,t+0.12,0.13,'triangle',0.12); tone(1568,t+0.28,0.17,'triangle',0.14); tone(2093,t+0.46,0.20,'sine',0.10);
     }
     const ZH_DISH={
-      '焼き餃子':'煎饺','自家製小籠包':'自制小笼包','水餃子':'水饺','自家製春巻き':'自制春卷','ニラ饅頭':'韭菜饼','蒸しセット':'蒸饺套餐','蒸し餃子':'蒸饺','自家製薄焼き餠':'薄饼','エビ棒春巻き':'虾春卷',
+      '焼き餃子':'煎饺','自家製小籠包':'自制小笼包','水餃子':'水饺','自家製春巻き':'自制春卷','ニラ饅頭':'韭菜饼','蒸しセット':'蒸饺套餐','蒸し餃子':'蒸饺','自家製薄焼き餠':'家常饼','自家製薄焼き餅':'家常饼','エビ棒春巻き':'虾春卷',
       'クラゲの中華酢和え':'凉拌海蜇','ピータン':'皮蛋','ピータンと豆腐の和え物':'皮蛋豆腐','自家製チャーシュー':'自制叉烧','鴨のスモーク':'熏鸭','ザーサイ':'榨菜','野菜サラダ':'蔬菜沙拉','鶏軟骨唐揚げ':'炸鸡软骨','枝豆':'毛豆','ニンニク入り中華風たたききゅうり':'蒜蓉拍黄瓜','フライドポテト':'炸薯条','下足の醤油かけ サクサク揚げ':'脆炸鱿鱼须','自家製広州風味鶏肉チャーシュー':'广式鸡叉烧','中華風ローストチキン':'中式烧鸡','棒棒鶏':'棒棒鸡','甲イカお湯引きネギ油ソース':'葱油墨鱼','塩味ニラ玉子焼き':'韭菜煎蛋','口水鷄':'口水鸡',
       'イカと野菜の豆板醤炒め':'豆瓣酱炒鱿鱼蔬菜','エビのチリソース炒め':'辣酱虾仁','エビのチリソース炒め（小）':'小份辣酱虾仁','回鍋肉':'回锅肉','酢豚':'糖醋里脊','酢豚（小）':'小份糖醋里脊','海鮮八宝菜':'海鲜八宝菜','ピーマンと豚肉の炒め':'青椒肉丝','ピーマンと牛肉の炒め':'青椒牛肉','油淋鶏':'油淋鸡','油淋鶏（小）':'小份油淋鸡','トマトと玉子炒め':'番茄炒蛋','トマトと玉子炒め（小）':'小份番茄炒蛋','若鶏の唐揚げ':'炸鸡块','豚肉入りマーラー鍋':'猪肉麻辣锅','マーボー豆腐':'麻婆豆腐','黒酢酢豚':'黑醋糖醋肉','五目と玉子炒め':'什锦炒蛋','エビの天ぷら':'炸虾','エビの天ぷら（小）':'小份炸虾','エビのマヨネーズ炒め':'蛋黄酱虾仁',
       '豚肉の辛味煮込み':'水煮肉片','生菜包':'生菜包','揚げ手羽先':'炸鸡翅','鶏肉と山椒のピリ辛炒め':'花椒辣炒鸡','若鶏とカシューナッツの炒め':'腰果鸡丁','豚ヒレの天ぷら':'炸猪里脊','牛肉とオイスターソース炒め':'蚝油牛肉','ユウシャンロウス（魚香肉絲）':'鱼香肉丝','北海道産ホタテ炒め':'北海道扇贝炒','フカヒレあんかけ':'鱼翅烩','フカヒレ玉のあんかけ':'鱼翅烩','四川風エビの野菜炒め':'川味虾仁炒蔬菜','蒸しパン':'馒头','豚の角煮':'红烧肉','ニラと豚レバーの炒め':'韭菜炒猪肝','海鮮三種炒め':'炒海鲜三鲜','海鮮おこげ':'海鲜锅巴',
@@ -207,71 +207,194 @@
       const name=String(it?.name||'').trim();
       return ZH_DISH[name]||name;
     }
-    function chineseOrderText(order){
-      const parts=(order?.items||[]).map(it=>`${chineseDishName(it)}，${Math.max(1,Number(it.qty||1))}份`);
-      return parts.join('，')||'新订单';
+
+    const JAPANESE_DISH_PATTERNS=[
+      /酢豚/,
+      /エビチリ/,
+      /エビのチリソース/,
+      /エビマヨ/,
+      /エビのマヨネーズ/,
+      /ローストチキン/
+    ];
+    function shouldSpeakDishInJapanese(name){
+      const n=String(name||'').trim();
+      return JAPANESE_DISH_PATTERNS.some(re=>re.test(n));
+    }
+    function cleanSelectedValue(v){
+      return String(v??'')
+        .replace(/（[+\-]?¥[\d,]+）/g,'')
+        .replace(/\([+\-]?¥[\d,]+\)/g,'')
+        .trim();
+    }
+    function findMenuMeta(orderItem){
+      const id=String(orderItem?.id||'');
+      const name=String(orderItem?.name||'').trim();
+      for(const sec of menuCache||[]){
+        const item=(sec?.items||[]).find(x=>(id&&String(x?.id||'')===id)||(!id&&String(x?.name||'').trim()===name));
+        if(item) return {section:sec,item};
+      }
+      return {section:null,item:null};
+    }
+    function isDrinkOrderItem(orderItem){
+      const meta=findMenuMeta(orderItem);
+      if(meta.section?.menuGroup==='drink' || meta.item?.alcohol===true) return true;
+      const id=String(orderItem?.id||'');
+      if(/^(drink_|alc_)/.test(id) || id==='recommend_garigari_sour') return true;
+      return false;
+    }
+    function selectionIsDefault(orderItem,key,value){
+      const meta=findMenuMeta(orderItem);
+      const op=(meta.item?.options||[]).find(x=>String(x?.name||'')===String(key||''));
+      if(!op) return /^(普通|通常|普通サイズ|通常サイズ|なし)$/i.test(cleanSelectedValue(value));
+      return cleanSelectedValue(op.default||'')===cleanSelectedValue(value);
+    }
+    function chineseOptionPhrase(key,value){
+      const k=String(key||'');
+      const v=cleanSelectedValue(value);
+      if(!v) return '';
+      if(/サイズ|大きさ/.test(k)){
+        if(/^(小|小サイズ)$/.test(v)) return '小份';
+        if(/^(普通|通常|普通サイズ|通常サイズ)$/.test(v)) return '';
+      }
+      if(/辛さ/.test(k)){
+        if(/^(普通|通常)$/.test(v)) return '';
+        if(/2倍/.test(v)) return '两倍辣';
+        if(/3倍/.test(v)) return '三倍辣';
+        if(/半分|半/.test(v)) return '半辣';
+      }
+      if(/大盛り/.test(v)) return '大份';
+      if(/半チャーハン/.test(v)) return '半份炒饭';
+      if(/定食/.test(v)) return '套餐';
+      if(/単品/.test(v)) return '单点';
+      if(/キープ/.test(v)) return '存瓶';
+      if(/ロック/.test(v)) return '加冰';
+      if(/水割り/.test(v)) return '兑水';
+      if(/湯割り/.test(v)) return '兑热水';
+      if(/ソーダ割り/.test(v)) return '兑苏打水';
+      return v;
+    }
+    function japaneseOptionPhrase(key,value){
+      const k=String(key||'');
+      const v=cleanSelectedValue(value);
+      if(!v) return '';
+      if(/サイズ|大きさ/.test(k)){
+        if(/^(小|小サイズ)$/.test(v)) return '小';
+        if(/^(普通|通常|普通サイズ|通常サイズ)$/.test(v)) return '';
+      }
+      if(/辛さ/.test(k)){
+        if(/^(普通|通常)$/.test(v)) return '';
+        if(/2倍/.test(v)) return '辛さ2倍';
+        if(/3倍/.test(v)) return '辛さ3倍';
+        if(/半分|半/.test(v)) return '辛さ半分';
+      }
+      return v;
+    }
+    function selectedOptionPhrases(orderItem,lang){
+      const options=orderItem?.options && typeof orderItem.options==='object' ? orderItem.options : {};
+      return Object.entries(options).map(([key,value])=>{
+        if(selectionIsDefault(orderItem,key,value)) return '';
+        return lang==='ja-JP' ? japaneseOptionPhrase(key,value) : chineseOptionPhrase(key,value);
+      }).filter(Boolean);
+    }
+    function mergeSpeechSegments(segments){
+      const out=[];
+      for(const seg of segments){
+        if(!seg?.text) continue;
+        const last=out[out.length-1];
+        if(last && last.lang===seg.lang) last.text+=`，${seg.text}`;
+        else out.push({lang:seg.lang,text:seg.text});
+      }
+      return out;
+    }
+    function buildOrderSpeechSegments(orders){
+      const list=Array.isArray(orders)?orders:[];
+      const allItems=list.flatMap(o=>Array.isArray(o?.items)?o.items:[]);
+      const segments=[];
+      const hasDrink=allItems.some(isDrinkOrderItem);
+      if(hasDrink) segments.push({lang:'zh-CN',text:'客人要酒水'});
+
+      allItems.filter(it=>!isDrinkOrderItem(it)).forEach(it=>{
+        const qty=Math.max(1,Number(it?.qty||1));
+        const name=String(it?.name||'').trim();
+        const jp=shouldSpeakDishInJapanese(name);
+        const lang=jp?'ja-JP':'zh-CN';
+        const base=jp ? `${name}、${qty}人前` : `${chineseDishName(it)}，${qty}份`;
+        const optionParts=selectedOptionPhrases(it,lang);
+        segments.push({lang,text:[base,...optionParts].filter(Boolean).join('，')});
+        if(it?.note){
+          // 自由入力の要望は日本語でそのまま読ませる。
+          segments.push({lang:'ja-JP',text:`要望、${String(it.note).trim()}`});
+        }
+      });
+      return mergeSpeechSegments(segments);
     }
     function isKitchenScreen(){
       const role=localStorage.getItem('fukurinrou_staff_role') || '';
       const label=document.querySelector('.device-label')?.textContent || '';
       return role==='kitchen' || document.body.classList.contains('kitchen-big-mode') || /キッチン/.test(label);
     }
+
     let activeUtterance=null;
+    let voiceSequenceToken=0;
     let chineseVoice=null;
-    function refreshChineseVoice(){
-      if(!('speechSynthesis' in window)) return null;
+    let japaneseVoice=null;
+    function refreshVoices(){
+      if(!('speechSynthesis' in window)) return;
       const voices=window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
       chineseVoice=voices.find(v=>/^zh-CN$/i.test(v.lang||'')) ||
         voices.find(v=>/^zh(?:-|$)/i.test(v.lang||'')) ||
         voices.find(v=>/Xiaoxiao|Xiaoyi|Ting-Ting|Huihui|Chinese|Mandarin|普通话|国语|中文/i.test(`${v.lang||''} ${v.name||''}`)) || null;
-      return chineseVoice;
+      japaneseVoice=voices.find(v=>/^ja-JP$/i.test(v.lang||'')) ||
+        voices.find(v=>/^ja(?:-|$)/i.test(v.lang||'')) ||
+        voices.find(v=>/Japanese|日本語|Kyoko|Otoya|Haruka/i.test(`${v.lang||''} ${v.name||''}`)) || null;
+    }
+    function voiceFor(lang){
+      refreshVoices();
+      return lang==='ja-JP' ? japaneseVoice : chineseVoice;
     }
     if('speechSynthesis' in window){
-      refreshChineseVoice();
-      try{window.speechSynthesis.addEventListener('voiceschanged',refreshChineseVoice)}catch(e){}
+      refreshVoices();
+      try{window.speechSynthesis.addEventListener('voiceschanged',refreshVoices)}catch(e){}
     }
-    function buildUtterance(text){
-      const u=new SpeechSynthesisUtterance(`${text}。${text}。`);
-      u.lang='zh-CN';
-      u.rate=1.32;
+    function buildUtterance(text,lang){
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang=lang||'zh-CN';
+      u.rate=lang==='ja-JP'?1.24:1.32;
       u.pitch=1.03;
       u.volume=1;
-      const voice=refreshChineseVoice();
-      if(voice)u.voice=voice;
+      const voice=voiceFor(u.lang);
+      if(voice) u.voice=voice;
       return u;
     }
-    function speakChineseTwice(text){
+    function speakSegmentsTwice(segments){
       if(!notifyEnabled || !isKitchenScreen() || !('speechSynthesis' in window)) return false;
+      const clean=mergeSpeechSegments(segments||[]).filter(x=>x.text);
+      if(!clean.length) return false;
       try{
         const synth=window.speechSynthesis;
+        const token=++voiceSequenceToken;
         if(synth.paused) synth.resume();
-        if(synth.speaking || synth.pending) synth.cancel();
-        const u=buildUtterance(text);
-        activeUtterance=u;
-        let started=false;
-        u.onstart=()=>{started=true};
-        u.onend=()=>{if(activeUtterance===u)activeUtterance=null};
-        u.onerror=(e)=>{
-          console.error('中国語読み上げエラー',e);
-          if(activeUtterance===u)activeUtterance=null;
+        synth.cancel();
+        const queue=[...clean,...clean].map(x=>({...x}));
+        let i=0;
+        const next=()=>{
+          if(token!==voiceSequenceToken || i>=queue.length){activeUtterance=null;return;}
+          const seg=queue[i++];
+          const u=buildUtterance(seg.text,seg.lang);
+          activeUtterance=u;
+          u.onend=()=>setTimeout(next,90);
+          u.onerror=e=>{console.error('読み上げエラー',e);setTimeout(next,120)};
+          synth.speak(u);
         };
-        synth.speak(u);
-        // 一部ブラウザで最初の speak が落ちる場合だけ、1回だけ再試行する。
-        setTimeout(()=>{
-          if(started || activeUtterance!==u || synth.speaking || synth.pending) return;
-          try{
-            const retry=buildUtterance(text);
-            activeUtterance=retry;
-            retry.onend=()=>{if(activeUtterance===retry)activeUtterance=null};
-            retry.onerror=e=>console.error('中国語読み上げ再試行エラー',e);
-            synth.speak(retry);
-          }catch(e){console.error(e)}
-        },650);
+        setTimeout(next,30);
         return true;
       }catch(e){
-        console.error('中国語読み上げエラー',e);
+        console.error('読み上げエラー',e);
         return false;
       }
+    }
+    function speakChineseTwice(text){
+      return speakSegmentsTwice([{lang:'zh-CN',text:String(text||'')}]);
     }
     function enableKitchenVoiceAndTest(){
       if(!isKitchenScreen()) return false;
@@ -281,30 +404,29 @@
       if(audioCtx && audioCtx.state==='suspended'){
         try{audioCtx.resume()}catch(e){}
       }
-      // ユーザー操作のクリック中に直接 speak() する。これがモバイルで最も確実。
       return speakChineseTwice('语音测试');
     }
     function notifyKitchenOrders(orders){
       if(!notifyEnabled || !isKitchenScreen() || !Array.isArray(orders) || !orders.length) return false;
-      const dishText=orders
-        .slice()
-        .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
-        .map(order=>chineseOrderText(order))
-        .filter(Boolean)
-        .join('，');
-      if(!dishText) return false;
+      const segments=buildOrderSpeechSegments(
+        orders.slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
+      );
+      if(!segments.length) return false;
       happySound();
-      // チャイムと読み上げを重ねず、チャイムのあとに中国語を流す。
-      setTimeout(()=>speakChineseTwice(dishText),780);
+      setTimeout(()=>speakSegmentsTwice(segments),780);
       return true;
     }
-    window.FUKURIN_V53_VOICE={
+    window.FUKURIN_V55_VOICE={
       enableAndTest:enableKitchenVoiceAndTest,
       notifyOrders:notifyKitchenOrders,
       isEnabled:()=>notifyEnabled,
-      hasChineseVoice:()=>!!refreshChineseVoice()
+      hasChineseVoice:()=>{refreshVoices();return !!chineseVoice},
+      hasJapaneseVoice:()=>{refreshVoices();return !!japaneseVoice}
     };
-    function hookSoundButton(){
+    // 旧版名も残して、キャッシュが混在しても動くようにする。
+    window.FUKURIN_V54_VOICE=window.FUKURIN_V55_VOICE;
+    window.FUKURIN_V53_VOICE=window.FUKURIN_V55_VOICE;
+        function hookSoundButton(){
       const btn=document.querySelector('.notify-sound-btn');
       if(!btn) return;
 
@@ -366,15 +488,7 @@
           );
 
           if(newOrders.length && notifyEnabled && isKitchenScreen()){
-            const dishText=newOrders
-              .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
-              .map(order=>chineseOrderText(order))
-              .filter(Boolean)
-              .join('，');
-            if(dishText){
-              happySound();
-              setTimeout(()=>speakChineseTwice(dishText),780);
-            }
+            notifyKitchenOrders(newOrders);
           }
 
           knownIds=ids;
