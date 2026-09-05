@@ -195,6 +195,7 @@
       '豚肉の辛味煮込み':'水煮肉片','生菜包':'生菜包','揚げ手羽先':'炸鸡翅','鶏肉と山椒のピリ辛炒め':'花椒辣炒鸡','若鶏とカシューナッツの炒め':'腰果鸡丁','豚ヒレの天ぷら':'炸猪里脊','牛肉とオイスターソース炒め':'蚝油牛肉','ユウシャンロウス（魚香肉絲）':'鱼香肉丝','北海道産ホタテ炒め':'北海道扇贝炒','フカヒレあんかけ':'鱼翅烩','フカヒレ玉のあんかけ':'鱼翅烩','四川風エビの野菜炒め':'川味虾仁炒蔬菜','蒸しパン':'馒头','豚の角煮':'红烧肉','ニラと豚レバーの炒め':'韭菜炒猪肝','海鮮三種炒め':'炒海鲜三鲜','海鮮おこげ':'海鲜锅巴',
       'マーボーナス':'麻婆茄子','マーボー春雨':'麻婆粉丝','チンゲン菜とクコシの炒め':'青菜枸杞炒','究極のもやしと豚肉強火炒め':'豆芽炒猪肉','レタスとオイスターソース炒め':'蚝油生菜','千切じゃがいもの炒め':'炒土豆丝','フカヒレスープ':'鱼翅汤','フカヒレスープ（小）':'小份鱼翅汤','スーラータン':'酸辣汤','スーラータン（小）':'小份酸辣汤','玉子スープ':'鸡蛋汤','玉子スープ（小）':'小份鸡蛋汤','春雨スープ':'粉丝汤','春雨スープ（小）':'小份粉丝汤','コンスープ':'玉米汤','コンスープ（小）':'小份玉米汤',
       '黒ごまアイス':'黑芝麻冰淇淋','大学もち':'拔丝年糕','大学いも':'拔丝地瓜','ごま団子':'芝麻球','マンゴープリン':'芒果布丁',
+      '中華風 蓮根の豚肉はさみ揚げ':'中式莲藕夹肉炸','9月限定 中華風 蓮根の豚肉はさみ揚げ':'中式莲藕夹肉炸','麻辣湯':'麻辣烫','冷やし中華':'中华凉面','汁なし担々麺':'干拌担担面','ガリガリくんアイスサワー':'嘎哩嘎哩君冰棒沙瓦','空心菜にんにく炒め':'蒜蓉空心菜','小松菜にんにく炒め':'蒜蓉小松菜','鶏肉チリソース':'辣酱鸡肉','鶏肉黒酢':'黑醋鸡肉','国産豚スペアリブ特製煮込み':'特制红烧国产猪排骨','鶏肉マヨネーズ':'蛋黄酱鸡肉',
       'ラーメンと炒飯セット':'拉面炒饭套餐','担々麺と炒飯セット':'担担面炒饭套餐','焼き餃子と炒飯セット':'煎饺炒饭套餐','水餃子と炒飯セット':'水饺炒饭套餐','エビチリ定食':'辣酱虾仁定食','回鍋肉定食':'回锅肉定食','酢豚定食':'糖醋里脊定食','マーボー豆腐定食':'麻婆豆腐定食','麻辣牛肉麺':'麻辣牛肉面','麻婆麺':'麻婆面','五目ラーメン':'什锦拉面','担々麺':'担担面','酸辣麺':'酸辣面','チャンポン':'什锦汤面','しょうゆラーメン':'酱油拉面','ラーメン':'拉面','柔らかい焼きそば':'软炒面','パリパリ皿うどん':'脆面','焼きビーフン':'炒米粉','チャーハン':'炒饭','エビ・レタスチャーハン':'虾仁生菜炒饭','エビとレタス炒飯':'虾仁生菜炒饭','豚肉辛チャーハン':'辣猪肉炒饭','豚肉辛炒飯':'辣猪肉炒饭','天津飯':'天津饭','中華丼':'中华盖饭','マーボー丼':'麻婆盖饭','白ご飯':'米饭','担々麺と焼き餃子セット':'担担面煎饺套餐','ラーメンと焼き餃子セット':'拉面煎饺套餐','マーボー豆腐セット':'麻婆豆腐套餐','酢豚セット':'糖醋里脊套餐','おつまみ':'下酒菜套餐','揚げ3種':'三种炸物','エビチリセット':'辣酱虾仁套餐','油淋鶏セット':'油淋鸡套餐','五目と玉子の炒めセット':'什锦炒蛋套餐','油淋鶏定食':'油淋鸡定食','八宝菜定食':'八宝菜定食',
       'コーラ':'可乐','オレンジ':'橙汁','カルピス':'可尔必思','ウーロン茶':'乌龙茶','普洱茶（プーアル茶）':'普洱茶','茉莉花茶（ジャスミン茶）':'茉莉花茶','ノンアルコール':'无酒精啤酒','生ビール（アサヒ）':'朝日生啤','アサヒ瓶ビール':'朝日瓶啤','キリン瓶ビール':'麒麟瓶啤','青島ビール':'青岛啤酒','角ハイボール':'角嗨棒','濃め角ハイボール':'浓角嗨棒','コックハイ':'可乐嗨棒','角レモンハイ':'角柠檬嗨棒','角ウーロンハイ':'角乌龙嗨棒','角桃ハイ':'角桃子嗨棒','角巨峰ハイ':'角葡萄嗨棒','黒霧島（芋）':'黑雾岛','島美人（芋）':'岛美人','雲海（そば）':'云海','かのか（麦）':'佳之香','二階堂（麦）':'二阶堂','しろ（米）':'白','紹興酒（関帝5年）':'关帝五年绍兴酒','紹興酒（関帝10年）':'关帝十年绍兴酒','中国白酒（42度）':'四十二度白酒','中国白酒（56度）':'五十六度白酒','梅酒':'梅酒','桂花陳酒（ケイカチン酒）':'桂花陈酒','杏露酒（シンル酒）':'杏露酒','荔枝酒（ライチ酒）':'荔枝酒','林檎酒（リンゴ酒）':'苹果酒','もも酒':'桃子酒','パイナ酒':'菠萝酒','レモンサワー':'柠檬沙瓦','カルピスサワー':'可尔必思沙瓦','巨峰サワー':'葡萄沙瓦','ももサワー':'桃子沙瓦','コーラサワー':'可乐沙瓦','パイナサワー':'菠萝沙瓦','赤ワイン':'红葡萄酒','冷酒（瓶300ml）':'冷清酒三百毫升','日本酒（150ml）':'清酒一百五十毫升','日本酒（250ml）':'清酒二百五十毫升'
     };
@@ -206,56 +207,73 @@
       const parts=(order?.items||[]).map(it=>`${chineseDishName(it)}，${Math.max(1,Number(it.qty||1))}份`);
       return parts.join('，')||'新订单';
     }
-    function speakChineseTwice(text) {
-  if (!notifyEnabled || !('speechSynthesis' in window)) return;
-  try {
-    speechSynthesis.cancel();
+    function isKitchenScreen(){
+      const role=localStorage.getItem('fukurinrou_staff_role') || '';
+      const label=document.querySelector('.device-label')?.textContent || '';
+      return role==='kitchen' || document.body.classList.contains('kitchen-big-mode') || /キッチン/.test(label);
+    }
+    function speakChineseTwice(text){
+      if(!notifyEnabled || !isKitchenScreen() || !('speechSynthesis' in window)) return;
+      try{
+        const synth=window.speechSynthesis;
+        synth.cancel();
+        synth.resume?.();
 
-    const voices = speechSynthesis.getVoices
-      ? speechSynthesis.getVoices(): [];
-    const zh = voices.find(v =>/^zh/i.test(v.lang) ||/Chinese|普通话|国语|中文/i.test(v.name));
+        const voices=synth.getVoices ? synth.getVoices() : [];
+        const zh=voices.find(v=>/^zh(?:-|$)/i.test(v.lang||'')) ||
+                 voices.find(v=>/Chinese|Mandarin|普通话|国语|中文/i.test(`${v.lang||''} ${v.name||''}`));
 
-    const u = new SpeechSynthesisUtterance(`${text}。${text}。`);
-    u.lang = 'zh-CN';
-    // 少し速め
-    u.rate = 1.38;
-    u.pitch = 1.05;
-    u.volume = 1;
-
-    if (zh) {
-      u.voice = zh;}
-
-    speechSynthesis.speak(u);
-  } 
-  catch (e) {
-    console.error('読み上げエラー', e);}
-}
-    function hookSoundButton(){
-      const btn=document.querySelector('.notify-sound-btn');
-      if(!btn || btn.dataset.v4hook) return;
-      btn.dataset.v4hook='1';
-      btn.addEventListener('click', async (e)=>{
-        e.preventDefault(); e.stopImmediatePropagation();
-        ensureAudio();
-        if(audioCtx && audioCtx.state==='suspended') try{ await audioCtx.resume(); }catch(e){}
-        notifyEnabled=true;
-        localStorage.setItem('fukurinrou_notify_sound','1');
-        btn.classList.add('on');
-        btn.textContent='🔔 通知音・中文読み上げ ON';
-        happySound();
-        setTimeout(()=>{speakChineseTwice('语音测试');},500);
-      }, true);
-      if(localStorage.getItem('fukurinrou_notify_sound')==='1'){
-        notifyEnabled=true;
-        btn.classList.add('on');
-        btn.textContent='🔔 通知音・中文 ON';
-      } else {
-        btn.textContent='🔕 通知音と中国語読み上げを有効にする';
+        // 1つの発話に2回分を入れる。iPhone/iPadでも2回目が消えにくい。
+        const u=new SpeechSynthesisUtterance(`${text}。${text}。`);
+        u.lang='zh-CN';
+        u.rate=1.38;
+        u.pitch=1.05;
+        u.volume=1;
+        if(zh) u.voice=zh;
+        u.onerror=(e)=>console.error('中国語読み上げエラー',e);
+        synth.speak(u);
+      }catch(e){
+        console.error('中国語読み上げエラー',e);
       }
     }
-    function isKitchenScreen(){
-      return document.body.classList.contains('kitchen-big-mode') ||/キッチン/.test(document.querySelector('.device-label')?.textContent || '');
-}
+    function hookSoundButton(){
+      const btn=document.querySelector('.notify-sound-btn');
+      if(!btn) return;
+
+      // 会計端末では中国語読み上げ機能を乗っ取らない。
+      // staff.html 標準の「通知音」だけをそのまま利用できる。
+      if(!isKitchenScreen()) return;
+
+      if(btn.dataset.v4hook) return;
+      btn.dataset.v4hook='1';
+
+      if(notifyEnabled){
+        btn.classList.add('on');
+        btn.textContent='🔔 キッチン通知・中文読み上げ ON';
+      }else{
+        btn.classList.remove('on');
+        btn.textContent='🔕 キッチン通知と中国語読み上げを有効にする';
+      }
+
+      btn.addEventListener('click', async (e)=>{
+        // キッチンだけ v4-enhance.js 側で通知を担当する。
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        ensureAudio();
+        if(audioCtx && audioCtx.state==='suspended'){
+          try{ await audioCtx.resume(); }catch(err){ console.warn(err); }
+        }
+
+        notifyEnabled=true;
+        btn.classList.add('on');
+        btn.textContent='🔔 キッチン通知・中文読み上げ ON';
+
+        // ボタンを押したその場で必ずテスト。音声再生のユーザー操作条件も満たす。
+        happySound();
+        speakChineseTwice('语音测试');
+      }, true);
+    }
     function subscribeOrders(){
       if(!window.firebase || !firebase.apps || !firebase.apps.length) return;
 
@@ -281,13 +299,15 @@
           );
 
           if(newOrders.length && notifyEnabled && isKitchenScreen()){
-            newOrders
+            const dishText=newOrders
               .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
-              .forEach(order=>{
-                const dishText=chineseOrderText(order);
-                happySound();
-                speakChineseTwice(dishText);
-              });
+              .map(order=>chineseOrderText(order))
+              .filter(Boolean)
+              .join('，');
+            if(dishText){
+              happySound();
+              speakChineseTwice(dishText);
+            }
           }
 
           knownIds=ids;
