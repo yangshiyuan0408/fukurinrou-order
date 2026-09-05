@@ -1,3 +1,4 @@
+// 2026-09-05 23:46 変更済み
 (function(){
   const IS_STAFF=/staff\.html(?:$|\?)/.test(location.pathname) || /管理画面/.test(document.title);
   const CUSTOMER_STYLE=`
@@ -158,8 +159,11 @@
       if(window.firebase && firebase.apps && firebase.apps.length){
         enhanceStaffUI();
         hookSaveButton();
-        hookSoundButton();
-        if(!subscribed) subscribeOrders();
+        // v5.3: staff.html がキッチン通知を直接制御する。旧版だけ従来フックを使う。
+        if(!window.FUKURIN_V53_STAFF_DRIVES_VOICE){
+          hookSoundButton();
+          if(!subscribed) subscribeOrders();
+        }
       }
     });
     mo.observe(document.body,{childList:true,subtree:true});
@@ -212,30 +216,94 @@
       const label=document.querySelector('.device-label')?.textContent || '';
       return role==='kitchen' || document.body.classList.contains('kitchen-big-mode') || /キッチン/.test(label);
     }
+    let activeUtterance=null;
+    let chineseVoice=null;
+    function refreshChineseVoice(){
+      if(!('speechSynthesis' in window)) return null;
+      const voices=window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+      chineseVoice=voices.find(v=>/^zh-CN$/i.test(v.lang||'')) ||
+        voices.find(v=>/^zh(?:-|$)/i.test(v.lang||'')) ||
+        voices.find(v=>/Xiaoxiao|Xiaoyi|Ting-Ting|Huihui|Chinese|Mandarin|普通话|国语|中文/i.test(`${v.lang||''} ${v.name||''}`)) || null;
+      return chineseVoice;
+    }
+    if('speechSynthesis' in window){
+      refreshChineseVoice();
+      try{window.speechSynthesis.addEventListener('voiceschanged',refreshChineseVoice)}catch(e){}
+    }
+    function buildUtterance(text){
+      const u=new SpeechSynthesisUtterance(`${text}。${text}。`);
+      u.lang='zh-CN';
+      u.rate=1.32;
+      u.pitch=1.03;
+      u.volume=1;
+      const voice=refreshChineseVoice();
+      if(voice)u.voice=voice;
+      return u;
+    }
     function speakChineseTwice(text){
-      if(!notifyEnabled || !isKitchenScreen() || !('speechSynthesis' in window)) return;
+      if(!notifyEnabled || !isKitchenScreen() || !('speechSynthesis' in window)) return false;
       try{
         const synth=window.speechSynthesis;
-        synth.cancel();
-        synth.resume?.();
-
-        const voices=synth.getVoices ? synth.getVoices() : [];
-        const zh=voices.find(v=>/^zh(?:-|$)/i.test(v.lang||'')) ||
-                 voices.find(v=>/Chinese|Mandarin|普通话|国语|中文/i.test(`${v.lang||''} ${v.name||''}`));
-
-        // 1つの発話に2回分を入れる。iPhone/iPadでも2回目が消えにくい。
-        const u=new SpeechSynthesisUtterance(`${text}。${text}。`);
-        u.lang='zh-CN';
-        u.rate=1.38;
-        u.pitch=1.05;
-        u.volume=1;
-        if(zh) u.voice=zh;
-        u.onerror=(e)=>console.error('中国語読み上げエラー',e);
+        if(synth.paused) synth.resume();
+        if(synth.speaking || synth.pending) synth.cancel();
+        const u=buildUtterance(text);
+        activeUtterance=u;
+        let started=false;
+        u.onstart=()=>{started=true};
+        u.onend=()=>{if(activeUtterance===u)activeUtterance=null};
+        u.onerror=(e)=>{
+          console.error('中国語読み上げエラー',e);
+          if(activeUtterance===u)activeUtterance=null;
+        };
         synth.speak(u);
+        // 一部ブラウザで最初の speak が落ちる場合だけ、1回だけ再試行する。
+        setTimeout(()=>{
+          if(started || activeUtterance!==u || synth.speaking || synth.pending) return;
+          try{
+            const retry=buildUtterance(text);
+            activeUtterance=retry;
+            retry.onend=()=>{if(activeUtterance===retry)activeUtterance=null};
+            retry.onerror=e=>console.error('中国語読み上げ再試行エラー',e);
+            synth.speak(retry);
+          }catch(e){console.error(e)}
+        },650);
+        return true;
       }catch(e){
         console.error('中国語読み上げエラー',e);
+        return false;
       }
     }
+    function enableKitchenVoiceAndTest(){
+      if(!isKitchenScreen()) return false;
+      notifyEnabled=true;
+      localStorage.setItem('fukurinrou_notify_sound','1');
+      ensureAudio();
+      if(audioCtx && audioCtx.state==='suspended'){
+        try{audioCtx.resume()}catch(e){}
+      }
+      // ユーザー操作のクリック中に直接 speak() する。これがモバイルで最も確実。
+      return speakChineseTwice('语音测试');
+    }
+    function notifyKitchenOrders(orders){
+      if(!notifyEnabled || !isKitchenScreen() || !Array.isArray(orders) || !orders.length) return false;
+      const dishText=orders
+        .slice()
+        .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
+        .map(order=>chineseOrderText(order))
+        .filter(Boolean)
+        .join('，');
+      if(!dishText) return false;
+      happySound();
+      // チャイムと読み上げを重ねず、チャイムのあとに中国語を流す。
+      setTimeout(()=>speakChineseTwice(dishText),780);
+      return true;
+    }
+    window.FUKURIN_V53_VOICE={
+      enableAndTest:enableKitchenVoiceAndTest,
+      notifyOrders:notifyKitchenOrders,
+      isEnabled:()=>notifyEnabled,
+      hasChineseVoice:()=>!!refreshChineseVoice()
+    };
     function hookSoundButton(){
       const btn=document.querySelector('.notify-sound-btn');
       if(!btn) return;
@@ -269,8 +337,7 @@
         btn.classList.add('on');
         btn.textContent='🔔 キッチン通知・中文読み上げ ON';
 
-        // ボタンを押したその場で必ずテスト。音声再生のユーザー操作条件も満たす。
-        happySound();
+        // ボタンを押したその場で中国語音声をテストする。
         speakChineseTwice('语音测试');
       }, true);
     }
@@ -306,7 +373,7 @@
               .join('，');
             if(dishText){
               happySound();
-              speakChineseTwice(dishText);
+              setTimeout(()=>speakChineseTwice(dishText),780);
             }
           }
 

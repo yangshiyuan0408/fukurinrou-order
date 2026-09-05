@@ -1,3 +1,4 @@
+<!-- 2026-09-05 23:46 変更済み -->
 <!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"><meta name="robots" content="noindex,nofollow,noarchive"><title>福林楼 管理画面</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
 :root{--paper:#FAF3E7;--paper-deep:#F1E7D3;--ink:#2B241D;--ink-soft:#6B6053;--lacquer:#A8362B;--lacquer-deep:#7C271F;--gold:#C9972B;--bamboo:#4B6350;--line:#DCD0B6;--white:#FFFDF8;--font-display:'Noto Serif JP',serif;--font-body:'Noto Sans JP',sans-serif;--font-ticket:'DM Mono',monospace}
 *{box-sizing:border-box}html,body{margin:0;padding:0}body{background:var(--paper);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}#app{min-height:100vh}button,input,textarea{font-family:var(--font-body)}button{cursor:pointer;border:none;background:none}.btn-primary{background:var(--lacquer);color:var(--white);font-weight:700;font-size:15px;padding:14px 20px;border-radius:5px}.btn-primary:disabled{background:#C9BBA3}.btn-ghost{color:var(--ink-soft);font-size:13px;padding:8px 10px;text-decoration:underline;text-underline-offset:3px}.loading{padding:60px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px}.perforation{height:1px;background-image:repeating-linear-gradient(to right,var(--line) 0 6px,transparent 6px 12px)}::-webkit-scrollbar{height:0;width:0}
@@ -34,6 +35,7 @@ body.kitchen-big-mode .empty-col{font-size:23px;padding:36px 12px}
 .history-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:12px;background:var(--white);border:1px solid var(--line)}
 .history-filter label{font-size:13px;font-weight:700}.history-date{font-size:16px;padding:9px 11px;border:1px solid var(--line);border-radius:5px;background:white}.history-day-total{font-size:13px;color:var(--ink-soft);font-weight:700}
 </style></head><body><div id="app"></div><script src="menu-data.js"></script><script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-database-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script><script>
+window.FUKURIN_V53_STAFF_DRIVES_VOICE=true;
 (function(){
   "use strict";
   const firebaseConfig = {
@@ -250,9 +252,43 @@ body.kitchen-big-mode .empty-col{font-size:23px;padding:36px 12px}
   async function enableSound(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return false;if(!notifyAudioContext)notifyAudioContext=new A();if(notifyAudioContext.state==="suspended")await notifyAudioContext.resume();notifySoundEnabled=true;localStorage.setItem("fukurinrou_notify_sound","1");playSound();return true}catch(e){return false}}
   function tone(f,t,d){if(!notifyAudioContext||!notifySoundEnabled)return;const o=notifyAudioContext.createOscillator(),g=notifyAudioContext.createGain();o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(notifyAudioContext.destination);o.start(t);o.stop(t+d+.03)}
   function playSound(){if(!notifyAudioContext||!notifySoundEnabled)return;const t=notifyAudioContext.currentTime+.02;tone(660,t,.16);tone(880,t+.2,.2);tone(1040,t+.46,.28)}
-  function renderLogin(){const w=document.createElement("div");w.className="staff-login-wrap";w.innerHTML=`<div class="staff-login-card"><h1>福林楼 管理画面 <span class="version-tag">v5.2</span></h1><div class="login-sub">スタッフ専用です。</div><form id="login"><label>メールアドレス</label><input id="email" type="email" autocomplete="username" required><label>パスワード</label><input id="pw" type="password" autocomplete="current-password" required><div id="err" class="login-error"></div><button class="btn-primary" id="loginBtn" style="width:100%;margin-top:18px">ログイン</button></form></div>`;app.replaceChildren(w);w.querySelector("#login").onsubmit=async e=>{e.preventDefault();const b=w.querySelector("#loginBtn"),er=w.querySelector("#err");b.disabled=true;b.textContent="ログイン中…";try{const c=await auth.signInWithEmailAndPassword(w.querySelector("#email").value.trim(),w.querySelector("#pw").value);if(!isStaff(c.user)){await auth.signOut();throw Error("staff")}state.menu=await loadMenu();rebuildIndex(state.menu);state.orders=await loadOrders();if(state.role)renderStaff();else renderRole();subscribe()}catch(x){er.textContent="メールアドレスまたはパスワードを確認してください。";er.style.display="block";b.disabled=false;b.textContent="ログイン"}}}
+  function renderLogin(){const w=document.createElement("div");w.className="staff-login-wrap";w.innerHTML=`<div class="staff-login-card"><h1>福林楼 管理画面 <span class="version-tag">v5.3</span></h1><div class="login-sub">スタッフ専用です。</div><form id="login"><label>メールアドレス</label><input id="email" type="email" autocomplete="username" required><label>パスワード</label><input id="pw" type="password" autocomplete="current-password" required><div id="err" class="login-error"></div><button class="btn-primary" id="loginBtn" style="width:100%;margin-top:18px">ログイン</button></form></div>`;app.replaceChildren(w);w.querySelector("#login").onsubmit=async e=>{e.preventDefault();const b=w.querySelector("#loginBtn"),er=w.querySelector("#err");b.disabled=true;b.textContent="ログイン中…";try{const c=await auth.signInWithEmailAndPassword(w.querySelector("#email").value.trim(),w.querySelector("#pw").value);if(!isStaff(c.user)){await auth.signOut();throw Error("staff")}state.menu=await loadMenu();rebuildIndex(state.menu);state.orders=await loadOrders();if(state.role)renderStaff();else renderRole();subscribe()}catch(x){er.textContent="メールアドレスまたはパスワードを確認してください。";er.style.display="block";b.disabled=false;b.textContent="ログイン"}}}
   function renderRole(){const w=document.createElement("div");w.className="role-wrap";w.innerHTML=`<div class="role-card"><h1>この端末の用途を選択</h1><div class="login-sub">一度選ぶと、この端末に記憶します。あとで変更できます。</div><div class="role-grid"><button class="role-btn" data-role="kitchen">キッチン<small>調理開始・調理完了</small></button><button class="role-btn" data-role="cashier">会計<small>テーブル会計・注文履歴・メニュー編集</small></button></div></div>`;app.replaceChildren(w);w.querySelectorAll("[data-role]").forEach(b=>b.onclick=()=>{state.role=b.dataset.role;localStorage.setItem("fukurinrou_staff_role",state.role);renderStaff()})}
-  function header(){const d=document.createElement("div");d.className="staff-header";d.innerHTML=`<div class="staff-title"><h1>福林楼 管理画面 <span class="version-tag">v5.2</span></h1><div class="device-label">${state.role==="kitchen"?"キッチン端末":"会計端末"}</div></div><div class="header-actions"><button class="small-btn notify-sound-btn ${notifySoundEnabled?'on':''}" id="sound">${notifySoundEnabled?'🔔 通知音 ON':'🔕 通知音を有効にする'}</button><button class="small-btn" id="changeRole">端末切替</button><button class="small-btn" id="logout">ログアウト</button></div>`;d.querySelector("#sound").onclick=async()=>{if(await enableSound())renderStaff()};d.querySelector("#changeRole").onclick=()=>{localStorage.removeItem("fukurinrou_staff_role");state.role="";renderRole()};d.querySelector("#logout").onclick=async()=>{await auth.signOut();renderLogin()};return d}
+  function header(){
+    const d=document.createElement("div");
+    const kitchen=state.role==="kitchen";
+    const soundLabel=kitchen
+      ? (notifySoundEnabled?'🔔 キッチン通知・中文 ON':'🔕 キッチン通知・中文を有効にする')
+      : (notifySoundEnabled?'🔔 通知音 ON':'🔕 通知音を有効にする');
+    d.className="staff-header";
+    d.innerHTML=`<div class="staff-title"><h1>福林楼 管理画面 <span class="version-tag">v5.3</span></h1><div class="device-label">${kitchen?"キッチン端末":"会計端末"}</div></div><div class="header-actions"><button class="small-btn notify-sound-btn ${notifySoundEnabled?'on':''}" id="sound">${soundLabel}</button><button class="small-btn" id="changeRole">端末切替</button><button class="small-btn" id="logout">ログアウト</button></div>`;
+    d.querySelector("#sound").onclick=async e=>{
+      const btn=e.currentTarget;
+      if(state.role==="kitchen"){
+        const voice=window.FUKURIN_V53_VOICE;
+        if(!voice){
+          alert("中国語音声機能の読み込みに失敗しました。ページを再読み込みしてください。");
+          return;
+        }
+        const ok=voice.enableAndTest();
+        if(ok){
+          notifySoundEnabled=true;
+          btn.classList.add("on");
+          btn.textContent="🔔 キッチン通知・中文 ON";
+        }else{
+          alert("この端末で音声を開始できませんでした。端末の音量とブラウザの音声設定をご確認ください。");
+        }
+        return;
+      }
+      if(await enableSound()){
+        btn.classList.add("on");
+        btn.textContent="🔔 通知音 ON";
+      }
+    };
+    d.querySelector("#changeRole").onclick=()=>{localStorage.removeItem("fukurinrou_staff_role");state.role="";renderRole()};
+    d.querySelector("#logout").onclick=async()=>{await auth.signOut();renderLogin()};
+    return d
+  }
   function renderStaff(){if(!isStaff()){renderLogin();return}if(!state.role){renderRole();return}if(state.role!=="kitchen")document.body.classList.remove("kitchen-big-mode");const w=document.createElement("div");w.className="staff-wrap";w.appendChild(header());if(state.role==="kitchen")w.appendChild(renderKitchen());else w.appendChild(renderCashier());app.replaceChildren(w)}
   function renderKitchen(){document.body.classList.add("kitchen-big-mode");const board=document.createElement("div");board.className="board";const cols=[{key:"new",label:"新規",dot:"var(--lacquer)",next:"done",btn:"調理完了"},{key:"done",label:"完成",dot:"var(--bamboo)"}];cols.forEach(c=>{const list=state.orders.filter(o=>!o.completedAt&&(c.key==="new"?(o.status==="new"||o.status==="cooking"):o.status==="done")).sort((a,b)=>a.createdAt-b.createdAt);const col=document.createElement("div");col.innerHTML=`<div class="col-head"><span class="col-dot" style="background:${c.dot}"></span>${c.label}<span class="col-count">(${list.length})</span></div>`;if(!list.length)col.innerHTML+=`<div class="empty-col">注文なし</div>`;list.forEach(o=>col.appendChild(kitchenTicket(o,c)));board.appendChild(col)});return board}
   function kitchenTicket(o,c){const t=document.createElement("div");t.className="ticket "+c.key;t.innerHTML=`<div class="head"><span class="order-num">${esc(tableOf(o))}</span><span class="time">${timeStr(o.createdAt)}</span></div><div class="perforation"></div><div class="items">${(o.items||[]).map(it=>`<div><div class="item-line"><span>${esc(it.name)}</span><span>×${it.qty}</span></div>${it.optionText?`<div class="item-option">${esc(it.optionText)}</div>`:""}</div>`).join("")}</div><div class="foot">${c.next?`<button class="advance">${c.btn}</button>`:`<div class="done-note">✓ 調理完了</div>`}</div>`;if(c.next)t.querySelector(".advance").onclick=async()=>{if(await updateStatus(o.id,c.next)){o.status=c.next;renderStaff()}};return t}
@@ -270,7 +306,6 @@ body.kitchen-big-mode .empty-col{font-size:23px;padding:36px 12px}
   function subscribe(){
     db.ref("menu").off();
     db.ref("orders").off();
-
     db.ref("menu").on("value",s=>{
       if(s.exists()){
         state.menu=mergeMenuV3(s.val());
@@ -283,17 +318,20 @@ body.kitchen-big-mode .empty-col{font-size:23px;padding:36px 12px}
       db.ref("orders").on("value",s=>{
         const next=ordersFrom(s.val());
         const ids=new Set(next.map(o=>o.id));
-
-        // ここでは音・読み上げをしない。v4-enhance.js 側に一本化する。
+        let newOrders=[];
         if(!orderReady){
           knownIds=ids;
           orderReady=true;
         }else{
+          newOrders=next.filter(o=>o.status==="new"&&!knownIds.has(o.id));
           knownIds=ids;
         }
-
         state.orders=next;
         renderStaff();
+        // v5.3: キッチン端末だけ、新規注文を中国語で読み上げる。
+        if(state.role==="kitchen"&&newOrders.length&&window.FUKURIN_V53_VOICE){
+          window.FUKURIN_V53_VOICE.notifyOrders(newOrders);
+        }
       });
     }
   }
@@ -314,4 +352,4 @@ body.kitchen-big-mode .empty-col{font-size:23px;padding:36px 12px}
   }
   init();
 })();
-</script><script src="v4-enhance.js?v=53-kitchen-voice"></script><script src="admin-editor-v52.js?v=52"></script></body></html>
+</script><script src="v4-enhance.js?v=53"></script><script src="admin-editor-v52.js?v=52"></script></body></html>
